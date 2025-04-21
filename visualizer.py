@@ -1,5 +1,6 @@
-import ctypes
+import os
 import json
+import ctypes
 import matplotlib.pyplot as plt
 from ctypes import Structure, c_uint, c_float
 
@@ -13,14 +14,18 @@ class SimConfig(Structure):
     ]
 
 # Load DLL
-sim = ctypes.CDLL("/qoe_simulator.dll")
+dll_path = os.path.join(os.path.dirname(__file__), "libs", "qoe_core.dll")
+sim = ctypes.CDLL(dll_path)
 
 # FFI Function Signature
 sim.simulate_and_get_json.argtypes = [SimConfig]
-sim.simulate_and_get_json.restype = ctypes.c_char_p
+sim.simulate_and_get_json.restype = ctypes.c_void_p
 
-sim.free_simulation_string.argtypes = [ctypes.c_char_p]
+sim.free_simulation_string.argtypes = [ctypes.c_void_p]
 sim.free_simulation_string.restype = None
+
+sim.simulate_with_config_and_get_score.argtypes = [SimConfig]
+sim.simulate_with_config_and_get_score.restype = ctypes.c_float
 
 # Set Config
 config = SimConfig(
@@ -33,11 +38,18 @@ config = SimConfig(
 
 # Call simulation
 json_ptr = sim.simulate_and_get_json(config)
-json_str = ctypes.cast(json_ptr, ctypes.c_char_p).value.decode("utf-8")
+json_str = ctypes.string_at(json_ptr).decode("utf-8")
 sim.free_simulation_string(json_ptr)
 
 # Parse data
-data = json.loads(json_ptr)
+try:
+    data = json.loads(json_str)
+except Exception as e:
+    print("Failed to parse JSON:")
+    print("Error:", e)
+
+# Get Score
+qoe_score = sim.simulate_with_config_and_get_score(config)
 
 # Plot data
 timestamps = [frame["timestamp"] for frame in data]
@@ -48,13 +60,13 @@ stalls = [i for i, frame in enumerate(data) if frame["stalled"]]
 plt.figure()
 plt.subplot(2, 1, 1)
 plt.plot(timestamps, bitrates, label="bitrate (kbps)")
-plt.scatter(timestamps, [bitrates[i] for i in stalls], label="bitrate (kbps)")
+plt.scatter([timestamps[i] for i in stalls], [bitrates[i] for i in stalls], label="bitrate (kbps)")
 plt.legend()
-plt.title("Bitrate & Stalls Over Time")
+plt.title(f"Bitrate & Stalls Over Time (QoE: {qoe_score:.1f}/100)")
 
 plt.subplot(2, 1, 2)
 plt.plot(timestamps, buffer, label="buffer (s)", color="orange")
-plt.axhline(0.5, color="red", linestyle="--", lavel="Stall Threshold")
+plt.axhline(0.5, color="red", linestyle="--", label="Stall Threshold")
 plt.legend()
 plt.title("Buffer Level")
 

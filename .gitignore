@@ -175,3 +175,8 @@ cython_debug/
 
 # QOE
 qoe_core.dll
+
+# DLL
+libs/*.dll
+libs/*.so
+libs/*.dylib
