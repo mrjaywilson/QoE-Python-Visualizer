@@ -1,4 +1,4 @@
-# 🎥 QoE Python Visualizer
+# QoE Python Visualizer
 
 A Python-based visualizer for adaptive bitrate (ABR) streaming simulations.  
 This project interfaces with a Rust-based core simulation engine (`qoe_core.dll`) to:
@@ -12,7 +12,7 @@ This project interfaces with a Rust-based core simulation engine (`qoe_core.dll`
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 qoe_python_visualizer/
@@ -25,7 +25,7 @@ qoe_python_visualizer/
 
 ---
 
-## ⚙️ Prerequisites
+## Prerequisites
 
 - **Python 3.10+** (recommended)
 - Rust `qoe-core` project built (`cargo build --release`)
@@ -46,7 +46,7 @@ pip install -r requirements.txt
 
 ---
 
-## 🚀 Usage
+## Usage
 
 ### 1. Build the Rust Core
 
@@ -76,7 +76,7 @@ You will see:
 
 ---
 
-## 🧠 What is QoE?
+## What is QoE?
 
 **QoE (Quality of Experience)** is a heuristic score (0–100) that reflects:
 - Bitrate stability
@@ -88,7 +88,7 @@ Used to evaluate ABR strategy effectiveness across devices or sessions.
 
 ---
 
-## 🛠 Config Customization
+## Config Customization
 
 You can adjust playback settings inside `visualize.py`:
 
@@ -104,7 +104,7 @@ config = SimConfig(
 
 ---
 
-## 🧼 Troubleshooting
+## Troubleshooting
 
 ### `DLL not found`
 Make sure `qoe_core.dll` exists inside the `libs/` folder and that you're using the correct path in `visualize.py`.
@@ -114,13 +114,13 @@ Ensure you're calling `free_simulation_string()` **after** copying the returned 
 
 ---
 
-## 📄 License
+## License
 
 MIT
 
 ---
 
-## ✨ Credits
+## Credits
 
 - Rust core developed in [`qoe-core`](https://github.com/yourname/qoe-core)
 - Python visualization by [@mrjaywilson](https://github.com/mrjaywilson)
